@@ -42,42 +42,39 @@ public class Scheduler {
 //    }
 
 
-
     @Scheduled(cron = "0 * * * * *")
-    public  void verify(){
-        List<Remainder> list = remainderRepository.findByDateTimeBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now().plusMinutes(1));
-        for(Remainder item : list){
+    public void verify() {
+        List<Remainder> list = remainderRepository.findByDateTimeBetween(LocalDateTime.now().minusMinutes(1), LocalDateTime.now().plusMinutes(1));
+        for (Remainder item : list) {
             System.out.println(item.getDateTime());
-            remainderService.sendMail(item.getMailId(),item.getContent());
+            remainderService.sendMail(item.getMailId(), item.getContent());
         }
 
     }
 
 
-
     @Scheduled(cron = "0 5 * * * *")
-    public  void notifyAllRemainders(){
+    public void notifyAllRemainders() {
 
         LocalDateTime startOfDay = LocalDateTime.now();
 
-        LocalDateTime endOfDay   = LocalDateTime.now().toLocalDate().plusDays(1).atStartOfDay();
+        LocalDateTime endOfDay = LocalDateTime.now().toLocalDate().plusDays(1).atStartOfDay();
 
 
-        List<Remainder> remainders = remainderRepository.findByDateTimeBetween(startOfDay,endOfDay);
+        List<Remainder> remainders = remainderRepository.findByDateTimeBetween(startOfDay, endOfDay);
 
 
-        Map<String,List<Remainder>> users = remainders.stream().collect(Collectors.groupingBy(Remainder::getMailId));
+        Map<String, List<Remainder>> users = remainders.stream().collect(Collectors.groupingBy(Remainder::getMailId));
 
 
+        users.forEach((mailId, content) -> {
+            AllRemainders allRemainders = AllRemainders.builder()
+                    .mailId(mailId)
+                    .content(content.toString())
+                    .build();
 
-        users.forEach((mailId,content) ->{
-            AllRemainders   allRemainders = AllRemainders.builder()
-                 .mailId(mailId)
-                 .content(content.toString())
-                 .build();
-
-            remainderService.sendMail(allRemainders.getMailId(),allRemainders.getContent());
-            System.out.println(allRemainders.getMailId()+allRemainders.getContent());
+            remainderService.sendMail(allRemainders.getMailId(), allRemainders.getContent());
+            System.out.println(allRemainders.getMailId() + allRemainders.getContent());
 
         });
 
