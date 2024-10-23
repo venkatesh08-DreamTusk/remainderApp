@@ -7,8 +7,6 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class RemainderServiceImple implements  RemainderService{
@@ -30,7 +28,7 @@ public class RemainderServiceImple implements  RemainderService{
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(mailId);
-        message.setSubject("Mail From Remainder");
+        message.setSubject("Just Remainder For You ");
         message.setText(content);
 
         mailSender.send(message);
