@@ -1,5 +1,5 @@
  server:
-   port: 8088
+   port: 8080
 
  spring:
    jpa:
@@ -15,4 +15,20 @@
       username: postgres
       password: Venkatesh@08
       driver-class-name: org.postgresql.Driver
+
+   jackson:
+      property-naming-strategy: SNAKE_CASE
+
+   mail:
+      host: smtp.gmail.com
+      port: 587
+      username: venkatesh082001@gmail.com
+      password: dwedwguvzxqlygld
+      properties:
+         mail:
+           smtp:
+              auth: true
+              starttls:
+                 enable: true
+
 
