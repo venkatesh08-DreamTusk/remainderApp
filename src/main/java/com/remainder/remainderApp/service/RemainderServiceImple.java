@@ -7,6 +7,11 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 
 @Service
 public class RemainderServiceImple implements  RemainderService{
@@ -31,7 +36,32 @@ public class RemainderServiceImple implements  RemainderService{
         message.setSubject("Just Remainder For You ");
         message.setText(content);
 
+
         mailSender.send(message);
+    }
+
+    @Override
+    public List<Remainder> getAllRemainders() throws Exception {
+        List<Remainder> remainders =  remainderRepository.findAll();
+
+
+        if (!remainders.isEmpty()){
+            return remainders;
+        }else {
+            throw new Exception("There is No DATA");
+        }
+    }
+
+    @Override
+    public void removeRemainder(Long id) throws Exception {
+        Optional<Remainder> remainder = remainderRepository.findById(id);
+
+        if(remainder.isPresent()){
+            remainderRepository.deleteById(id);
+        }else {
+            throw new Exception("Id Not Found");
+        }
+
     }
 
 

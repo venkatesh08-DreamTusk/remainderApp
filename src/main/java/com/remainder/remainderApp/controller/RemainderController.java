@@ -6,13 +6,9 @@ import com.remainder.remainderApp.entity.Remainder;
 import com.remainder.remainderApp.service.RemainderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
 @RequestMapping("/remainder")
@@ -21,7 +17,7 @@ public class RemainderController {
     @Autowired
     private RemainderService remainderService;
 
-    @PostMapping()
+    @PostMapping
     public ApiResponse<Remainder> addContent(@Valid  @RequestBody RemainderDto remainderDto){
 
 
@@ -40,4 +36,21 @@ public class RemainderController {
                 .build();
 
     }
+
+    @GetMapping
+    public  ApiResponse<List<Remainder>> getAllRemainders() throws  Exception{
+        List<Remainder> remainders = remainderService.getAllRemainders();
+        return ApiResponse.<List<Remainder>>builder()
+                .status(true)
+                .data(remainders)
+                .error(null)
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public String removeRemainder(@PathVariable Long id) throws Exception {
+        remainderService.removeRemainder(id);
+        return "Deleted Successfully";
+    }
+
 }

@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
 @Data
 @AllArgsConstructor
@@ -36,7 +37,11 @@ public class RemainderDto {
 }
 
 class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+        //DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+            .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            .toFormatter();
 
     @Override
     public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt)
