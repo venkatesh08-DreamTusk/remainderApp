@@ -5,6 +5,7 @@ import com.remainder.remainderApp.repository.RemainderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class RemainderServiceImple implements  RemainderService{
     }
 
     @Override
+    @Async
     public void sendMail(String mailId, String content) {
         SimpleMailMessage message = new SimpleMailMessage();
 

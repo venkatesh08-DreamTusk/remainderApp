@@ -16,5 +16,5 @@ public class AllRemainders {
 
     private String mailId;
     private  String content;
-    private LocalDateTime time;
+
 }
