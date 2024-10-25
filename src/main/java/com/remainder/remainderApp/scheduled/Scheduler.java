@@ -6,13 +6,10 @@ import com.remainder.remainderApp.service.RemainderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Component
@@ -46,43 +43,24 @@ public class Scheduler {
     public void verify() throws InterruptedException {
         List<Remainder> list = remainderRepository.findByDateTimeBetween(LocalDateTime.now().minusMinutes(1), LocalDateTime.now().plusMinutes(1));
 
-        CompletableFuture<Remainder> completableFuture = new CompletableFuture<>();
+        List<CompletableFuture<Void>> completableFuture = list.stream().map(item->CompletableFuture.runAsync(() -> {
+            try{
+                remainderService.sendMail(item.getMailId(), item.getContent());
+                Thread.sleep(2000);
+                System.out.println("Mail sent...");
 
-        for (Remainder item : list) {
-            Executors.newCachedThreadPool().submit(()->{
-                try {
-                    Thread.sleep(2000);
-                    remainderService.sendMail(item.getMailId(), item.getContent());
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+            }catch (Exception e){
+                Thread.currentThread().interrupt();
+                throw  new RuntimeException("Mail Not sent...",e);
 
-            });
             }
 
+        })).toList();
 
+        System.out.println("Verified...");
         }
 
-//    @Scheduled(cron = "0 * * * * *")
-//    public void verify() throws InterruptedException {
-//        List<Remainder> list = remainderRepository.findByDateTimeBetween(LocalDateTime.now().minusMinutes(1), LocalDateTime.now().plusMinutes(1));
-//
 
-//
-//        for (Remainder item : list) {
-//
-//                try {
-//
-//                    remainderService.sendMail(item.getMailId(), item.getContent());
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//
-//        }
-//
-//
-//    }
 
 
     @Scheduled(cron = "0 0 * * * *")
